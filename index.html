@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Dendrobium Orchid - Drawing Sequence</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: #000000;
+            overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            transition: background 4s ease-in;
+        }
+        
+        body.drawn {
+            background: radial-gradient(circle at center, #0a1030 0%, #02040a 100%);
+        }
+
+        /* Grass */
+        #grass-container-back, #grass-container-front {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 300px;
+            pointer-events: none;
+        }
+        #grass-container-back { z-index: 4; }
+        #grass-container-front { z-index: 10; }
+
+        .grass-blade {
+            position: absolute;
+            bottom: -20px;
+            border-radius: 50% 50% 0 0;
+            transform-origin: bottom center;
+            animation: sway var(--sway-duration) ease-in-out infinite alternate var(--sway-delay);
+            will-change: transform;
+            
+            /* Entry Animation properties */
+            scale: 1 0;
+            transition: scale 0.8s ease-out;
+        }
+        .grass-blade.drawn {
+            scale: 1 1;
+        }
+
+        @keyframes sway {
+            0% { transform: rotate(var(--angle-start)); }
+            100% { transform: rotate(var(--angle-end)); }
+        }
+
+        /* Flowers */
+        #flowers-container {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .flower-wrapper {
+            position: absolute;
+            bottom: 0;
+            width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform-origin: bottom center;
+            animation: flower-sway var(--sway-duration) ease-in-out infinite alternate var(--sway-delay);
+            will-change: transform;
+        }
+
+        @keyframes flower-sway {
+            0% { transform: rotate(var(--angle-start)) scale(var(--scale)); }
+            100% { transform: rotate(var(--angle-end)) scale(var(--scale)); }
+        }
+
+        .stem {
+            width: 8px;
+            background: linear-gradient(to top, #064e3b, #0284c7);
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 0 15px rgba(2, 132, 199, 0.4);
+            
+            /* Entry Animation */
+            height: 0;
+            transition: height 1.5s ease-in-out;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 35px;
+            height: 65px;
+            background: linear-gradient(135deg, #2dd4bf, #0f766e);
+            border-radius: 0 100% 0 100%;
+            box-shadow: 0 0 10px rgba(45, 212, 191, 0.4);
+            
+            /* Entry Animation */
+            scale: 0;
+            transition: scale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .leaf.drawn { scale: 1; }
+
+        .leaf.left {
+            left: -30px;
+            transform-origin: bottom right;
+            transform: rotate(-45deg);
+        }
+
+        .leaf.right {
+            right: -30px;
+            transform-origin: bottom left;
+            transform: rotate(45deg) scaleX(-1);
+        }
+
+        .flower-head {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        /* Orchid Petals */
+        .petal {
+            position: absolute;
+            background: linear-gradient(to bottom, #93c5fd, #1d4ed8, #1e1b4b);
+            transform-origin: bottom center;
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.6);
+            border: 1px solid rgba(147, 197, 253, 0.4);
+            
+            /* Entry Animation */
+            scale: 0;
+            transition: scale 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .petal.drawn { scale: 1; }
+
+        .flower-center {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, #1e40af, #020617);
+            border-radius: 50%;
+            box-shadow: 0 0 15px #1d4ed8, 0 0 25px #1e3a8a;
+            z-index: 4;
+            
+            /* Entry Animation */
+            scale: 0;
+            transition: scale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .flower-center.drawn { scale: 1; }
+
+        .bud {
+            position: absolute;
+            width: 12px;
+            height: 25px;
+            background: linear-gradient(to bottom, #93c5fd, #1d4ed8);
+            border-radius: 50% 50% 20% 20% / 60% 60% 20% 20%;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
+            z-index: 1;
+            transform-origin: bottom center;
+            
+            /* Entry Animation */
+            scale: 0;
+            transition: scale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .bud.drawn { scale: 1; }
+
+        /* Messages */
+        #messages-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .message-wrapper {
+            position: absolute;
+            animation: float-msg 5s ease-in-out infinite alternate var(--delay);
+            will-change: transform;
+            
+            /* Entry Animation */
+            scale: 0;
+            opacity: 0;
+            transition: scale 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.8s ease-out;
+        }
+        .message-wrapper.drawn {
+            scale: 1;
+            opacity: 1;
+        }
+
+        .message {
+            border: 2px solid rgba(56, 189, 248, 0.8);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.8), inset 0 0 10px rgba(56, 189, 248, 0.4);
+            background: rgba(5, 10, 20, 0.7);
+            border-radius: 30px;
+            padding: 12px 24px;
+            color: #bae6fd;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            backdrop-filter: blur(4px);
+            max-width: 250px;
+            white-space: nowrap;
+        }
+
+        @keyframes float-msg {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
+        }
+
+        /* Particles */
+        #particles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float-up var(--duration) linear infinite;
+            
+            /* Entry Animation */
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+        .particle.drawn { opacity: 1; }
+
+        @keyframes float-up {
+            0% { transform: translateY(0) scale(0); opacity: 0; }
+            20% { opacity: 1; scale: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(-300px) scale(0); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particles-container"></div>
+    <div id="messages-container"></div>
+    
+    <div id="grass-container-back"></div>
+    <div id="flowers-container"></div>
+    <div id="grass-container-front"></div>
+
+    <script>
+        let timeline = 500; // Global sequence timer
+
+        // 0. Background fade in
+        setTimeout(() => {
+            document.body.classList.add('drawn');
+        }, timeline);
+
+        // 1. Generate Grass
+        const numGrass = window.innerWidth / 10;
+        const grassBack = document.getElementById('grass-container-back');
+        const grassFront = document.getElementById('grass-container-front');
+        const grassBlades = [];
+
+        for (let i = 0; i < numGrass; i++) {
+            const grass = document.createElement('div');
+            grass.className = 'grass-blade';
+            
+            const left = Math.random() * 100;
+            const height = 40 + Math.random() * 200; 
+            const width = 2 + Math.random() * 4;
+            
+            grass.style.left = `${left}%`;
+            grass.style.height = `${height}px`;
+            grass.style.width = `${width}px`;
+            
+            const isDark = Math.random() > 0.5;
+            if (isDark) {
+                grass.style.background = 'linear-gradient(to top, #022c22, #0d9488)';
+                grass.style.zIndex = 1;
+            } else {
+                grass.style.background = 'linear-gradient(to top, #064e3b, #2dd4bf)';
+                grass.style.zIndex = 2;
+            }
+            grass.style.boxShadow = '0 0 10px rgba(45, 212, 191, 0.1)';
+            
+            const baseAngle = -15 + Math.random() * 30;
+            const swayAmount = 5 + Math.random() * 10;
+            
+            grass.style.setProperty('--angle-start', `${baseAngle - swayAmount}deg`);
+            grass.style.setProperty('--angle-end', `${baseAngle + swayAmount}deg`);
+            grass.style.setProperty('--sway-duration', `${2 + Math.random() * 3}s`);
+            grass.style.setProperty('--sway-delay', `-${Math.random() * 4}s`);
+            
+            if (Math.random() > 0.6) {
+                grassFront.appendChild(grass);
+            } else {
+                grassBack.appendChild(grass);
+            }
+            grassBlades.push(grass);
+        }
+
+        // Animate grass sprouting
+        setTimeout(() => {
+            grassBlades.forEach(grass => {
+                setTimeout(() => {
+                    grass.classList.add('drawn');
+                }, Math.random() * 1500); // Randomly sprout over 1.5s
+            });
+        }, timeline);
+
+        timeline += 1200; // Let grass mostly finish before stems start
+
+        // 2. Generate Blue Dendrobium Orchids
+        const flowersContainer = document.getElementById('flowers-container');
+        const flowersData = [
+            { height: 420, left: 0, scale: 1.1, baseAngle: 0, leafCount: 4, orchids: 4 },      // Center tall
+            { height: 350, left: -100, scale: 0.9, baseAngle: -25, leafCount: 3, orchids: 3 }, // Left arching left
+            { height: 370, left: 100, scale: 0.95, baseAngle: 25, leafCount: 3, orchids: 3 }   // Right arching right
+        ];
+
+        flowersData.forEach((data, index) => {
+            // Stagger the drawing of each main stem
+            const stemStart = timeline + (index * 800); 
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flower-wrapper';
+            wrapper.style.left = `${data.left}px`;
+            
+            const swayAmount = 4;
+            wrapper.style.setProperty('--angle-start', `${data.baseAngle - swayAmount}deg`);
+            wrapper.style.setProperty('--angle-end', `${data.baseAngle + swayAmount}deg`);
+            wrapper.style.setProperty('--scale', data.scale);
+            wrapper.style.setProperty('--sway-duration', `${4 + Math.random() * 2}s`);
+            wrapper.style.setProperty('--sway-delay', `-${Math.random() * 4}s`);
+
+            // Stem
+            const stem = document.createElement('div');
+            stem.className = 'stem';
+            
+            // Trigger stem growth
+            setTimeout(() => {
+                stem.style.height = `${data.height}px`;
+            }, stemStart);
+
+            // Leaves
+            const leavesToDraw = [];
+            for (let i = 0; i < data.leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf ' + (i % 2 === 0 ? 'left' : 'right');
+                
+                const spacing = (data.height * 0.4) / Math.floor((data.leafCount + 1) / 2);
+                const pairIndex = Math.floor(i / 2);
+                const bottomPos = 30 + (pairIndex * spacing) + (i % 2 === 0 ? 0 : 30); 
+                leaf.style.bottom = `${bottomPos}px`;
+                stem.appendChild(leaf);
+                leavesToDraw.push({ el: leaf, bottom: bottomPos });
+            }
+            wrapper.appendChild(stem);
+
+            // Trigger leaves as stem passes their position
+            leavesToDraw.forEach(l => {
+                const appearTime = stemStart + 1500 * (l.bottom / data.height);
+                setTimeout(() => l.el.classList.add('drawn'), appearTime);
+            });
+
+            // Orchids
+            const orchidsToDraw = [];
+            for (let f = 0; f < data.orchids; f++) {
+                const head = document.createElement('div');
+                head.className = 'flower-head';
+                
+                const pos = data.height - 30 - (f * 70); 
+                head.style.bottom = `${pos}px`;
+                
+                const xOffset = f % 2 === 0 ? -25 : 25;
+                const scale = 1 - (f * 0.15); 
+                head.style.transform = `translateX(${xOffset}px) scale(${scale})`;
+
+                const petals = [];
+                const petalAngles = [-72, -36, 0, 36, 72];
+                petalAngles.forEach((angle, idx) => {
+                    const petal = document.createElement('div');
+                    petal.className = 'petal';
+                    petal.style.transform = `rotate(${angle}deg)`;
+                    
+                    if (idx === 2) { 
+                        petal.style.height = '70px';
+                        petal.style.width = '45px';
+                        petal.style.zIndex = 3;
+                        petal.style.borderRadius = '30% 30% 50% 50% / 20% 20% 60% 60%';
+                        petal.style.bottom = '-10px';
+                        petal.style.background = 'linear-gradient(to bottom, #60a5fa, #1e3a8a, #0f172a)'; 
+                    } else if (idx === 0 || idx === 4) {
+                        petal.style.height = '80px';
+                        petal.style.width = '35px';
+                        petal.style.zIndex = 2;
+                        petal.style.borderRadius = '50% 50% 30% 30% / 80% 80% 20% 20%';
+                        petal.style.bottom = '0';
+                    } else {
+                        petal.style.height = '85px';
+                        petal.style.width = '30px';
+                        petal.style.zIndex = 1;
+                        petal.style.borderRadius = '50% 50% 20% 20% / 70% 70% 30% 30%';
+                        petal.style.bottom = '5px';
+                    }
+                    head.appendChild(petal);
+                    petals.push(petal);
+                });
+
+                const center = document.createElement('div');
+                center.className = 'flower-center';
+                head.appendChild(center);
+
+                wrapper.appendChild(head);
+                orchidsToDraw.push({ center, petals, bottom: pos });
+            }
+
+            // Trigger orchids blooming
+            orchidsToDraw.forEach(o => {
+                const appearTime = stemStart + 1500 * (o.bottom / data.height);
+                setTimeout(() => o.center.classList.add('drawn'), appearTime);
+                o.petals.forEach((p, pIdx) => {
+                    setTimeout(() => p.classList.add('drawn'), appearTime + 200 + (pIdx * 150));
+                });
+            });
+
+            // Buds
+            const budsToDraw = [];
+            for (let b = 0; b < 2; b++) {
+                const bud = document.createElement('div');
+                bud.className = 'bud';
+                const pos = data.height + 10 + (b * 20);
+                bud.style.bottom = `${pos}px`;
+                bud.style.transform = `translateX(${b % 2 === 0 ? -10 : 10}px) rotate(${b % 2 === 0 ? -30 : 30}deg)`;
+                wrapper.appendChild(bud);
+                budsToDraw.push({ el: bud, bottom: pos });
+            }
+
+            // Trigger buds
+            budsToDraw.forEach(b => {
+                const appearTime = stemStart + 1500 * (b.bottom / data.height);
+                setTimeout(() => b.el.classList.add('drawn'), appearTime + 200);
+            });
+
+            flowersContainer.appendChild(wrapper);
+        });
+
+        timeline += (flowersData.length * 800) + 2000;
+
+        // 3. Generate Particles
+        const particlesContainer = document.getElementById('particles-container');
+        const colors = ['#38bdf8', '#818cf8', '#e0e7ff']; 
+        const allParticles = [];
+        
+        for (let i = 0; i < 40; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = 3 + Math.random() * 4;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            const left = 20 + Math.random() * 60; 
+            const top = 20 + Math.random() * 60;  
+            
+            particle.style.left = `${left}%`;
+            particle.style.top = `${top}%`;
+            
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.backgroundColor = color;
+            particle.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+            
+            particle.style.setProperty('--duration', `${4 + Math.random() * 4}s`);
+            particle.style.animationDelay = `-${Math.random() * 5}s`;
+            
+            particlesContainer.appendChild(particle);
+            allParticles.push(particle);
+        }
+
+        // Fade in particles smoothly
+        setTimeout(() => {
+            allParticles.forEach(p => {
+                setTimeout(() => p.classList.add('drawn'), Math.random() * 2000);
+            });
+        }, timeline);
+
+        timeline += 1500;
+
+        // 4. Generate Floating Messages
+        const messagesContainer = document.getElementById('messages-container');
+        const messages = [
+            { text: "You are my favorite person", top: "15%", left: "15%" },
+            { text: "I'm lucky to have you", top: "25%", right: "15%" },
+            { text: "You make my world brighter ❤️", top: "60%", left: "10%" },
+            { text: "Every flower reminds me of you", top: "65%", right: "12%" },
+            { text: "Forever grateful for you 🌙", top: "75%", center: true }
+        ];
+
+        const allMessages = [];
+
+        messages.forEach(msg => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message-wrapper';
+            wrapper.style.top = msg.top;
+            
+            const div = document.createElement('div');
+            div.className = 'message';
+            div.innerText = msg.text;
+
+            if (msg.center) {
+                wrapper.style.left = "50%";
+                div.style.position = 'relative';
+                div.style.left = '-50%'; 
+            } else {
+                if (msg.left) wrapper.style.left = msg.left;
+                if (msg.right) wrapper.style.right = msg.right;
+            }
+            
+            wrapper.style.setProperty('--delay', `-${Math.random() * 4}s`);
+            
+            wrapper.appendChild(div);
+            messagesContainer.appendChild(wrapper);
+            allMessages.push(wrapper);
+        });
+
+        // Pop in messages one by one
+        setTimeout(() => {
+            allMessages.forEach((m, idx) => {
+                setTimeout(() => m.classList.add('drawn'), idx * 700); 
+            });
+        }, timeline);
+
+    </script>
+</body>
+</html>
